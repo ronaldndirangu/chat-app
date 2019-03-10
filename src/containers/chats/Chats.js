@@ -1,38 +1,49 @@
 import React, { Component } from 'react';
 import './chats.scss';
+import Input from '../../components/chat/Input';
+import { connect } from 'react-redux';
+import { getChats } from '../../redux/actions/chatActions';
+import Notifications from './Notifications';
 
 class Chats extends Component {
-  state = {
-    chats: [
-      { id: 1, message: 'Hey there I am new here', createdAt: '2 hours ago' },
-      { id: 2, message: 'Welcome to the app Sean', createdAt: '2 hours ago' }
-    ]
-  };
+  componentDidMount() {
+    const { getChats } = this.props;
+    getChats();
+  }
 
   render() {
+    const { chats } = this.props;
     return (
-      <div
-        className="panel container panel-container"
-      >
-        <h1 className="panel-heading panel-container__heading">ChatRoom</h1>
-        <div className="panel-block panel-messages">
-          <div className="panel-messages__message">Chat message 1</div>
-          <div className="panel-messages__message">Chat message 2</div>
-          <div className="panel-messages__message">Chat message 3</div>
-          <div className="panel-messages__message">Chat message 4</div>
-        </div>
-        <div class="field">
-          <div class="control">
-            <input
-              class="input is-link"
-              type="text"
-              placeholder="Write something and press enter to send...."
-            />
+      <div className="main-container container">
+        <div
+          className="panel panel-container"
+        >
+          <h1 className="panel-heading panel-container__heading">ChatRoom</h1>
+          <div className="panel-block panel-messages">
+            {
+              chats && chats.map(chat => {
+                return (
+                  <div key={chat.id} className="panel-messages__message">{chat.message}</div>
+                );
+              })
+            }
           </div>
+          <Input />
+        </div>
+        <div className="notifications-container">
+            <Notifications />
         </div>
       </div>
     );
   }
 }
 
-export default Chats;
+const mapStateToProps = state => ({
+  chats: state.chats.chats
+})
+
+const mapDispatchToProps = {
+  getChats
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Chats);
